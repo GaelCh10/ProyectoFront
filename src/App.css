@@ -1,0 +1,37 @@
+.App {
+  width: 100%;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  /*font-family: __IBM_Plex_Sans_c3621c, __IBM_Plex_Sans_Fallback_c3621c;*/
+  font-family: 50% sans-serif;
+  position: relative;
+
+}
+
+.textoBlanco{
+  color: white;
+}
+
+.colorFondo{
+  background: #ffffff;
+}
+
+.fondo{
+  background: #f1f5fd;
+}
+
+
+.dactilologia2 {
+  font-family: Dactilologia2;
+}
+
+.letraC{
+  font-family: letra;
+}
+
+.letraC3{
+  font-family: letra4;
+}

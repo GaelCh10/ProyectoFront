@@ -1,0 +1,41 @@
+.contenedorMinCurso {
+    display: flex;
+    /*width: 30%;*/
+    width: 250px;
+    height: 200px;
+    justify-content: center;
+    align-items: center;
+    margin: 7px;
+    background: #517fe0
+  }
+  
+  .navl{
+    text-decoration: none;
+  }
+  .contenedorMin {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    height: 180px;
+    justify-content: center;
+    align-items: center;
+    background: #517fe0;
+  }
+  
+  .contenedorMin h4{
+    color: black;
+    font-weight: bold;
+  }
+  
+  .imgCursoMin {
+    width: 100%;
+    height: auto;
+  }
+  
+  @media (max-width: 768px) {
+    .contenedorMinCurso {
+      width: 100%;
+      height: 200px;
+    }
+  }
+  

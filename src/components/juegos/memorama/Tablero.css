@@ -1,0 +1,12 @@
+
+.board1{
+    display: flex;
+    width: 370px;
+    height: 370px;
+    /* background: #7a6be9; */
+    background: #2e46f9;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    overflow: hidden;
+}

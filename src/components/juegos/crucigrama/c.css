@@ -1,0 +1,99 @@
+.crossword {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial, sans-serif;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+  }
+  
+  .grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .row {
+    display: flex;
+  }
+  .cell-wrapper {
+    position: relative;
+  }
+  
+  .cell {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    font-size: 18px;
+    margin: 2px;
+    border: 1px solid #000;
+    background-color: #f9f9f9;
+  }
+  
+  .cell:disabled {
+    background-color: #ddd;
+    color: #000;
+  }
+
+  .cell-number {
+    position: absolute;
+    top: 0px;
+    left: 3px;
+    font-size: 14px;
+    font-weight: bold;
+    color: black;
+  }
+  
+  .clues {
+    margin-top: 20px;
+    text-align: left;
+  }
+  
+  .clues h3 {
+    margin-bottom: 10px;
+  }
+  
+  .clues ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .clues li {
+    margin: 5px 0;
+  }
+  .correct {
+    background: lightgreen;
+  }
+  .incorrect {
+    background: lightcoral;
+  }
+  .check-button {
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+
+  .input-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .input {
+    padding-right: 20px; /* Espacio para la letra en la esquina */
+  }
+  
+  .corner-letter {
+    position: absolute;
+    left: 0px; /* Ajusta la posición horizontal */
+    top: 50%; /* Ajusta la posición vertical */
+    transform: translateY(-50%); /* Centra verticalmente */
+    font-size: 14px; /* Tamaño de la letra */
+    color: #888; /* Color de la letra */
+    pointer-events: none; /* Evita que la letra interfiera con el input */
+  }

@@ -1,0 +1,119 @@
+.SideBar {
+  /* background: #131313; */
+  display: flex;
+  /*background: #4f39a4;*/
+  /*background: #4066d4; opcion i*/
+  background: #0b1973;
+  width: 250px;
+  height: 100vh;
+  flex-direction: column;
+  /* justify-content: end; */
+  /* position: absolute; */
+  z-index: 10;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  margin: 0px;
+  width: 100%;
+  align-items: center;
+}
+
+.nav-list li {
+  text-decoration: none;
+  width: 90%;
+}
+
+.nav {
+  text-decoration: none;
+}
+
+.ContSide {
+  display: flex;
+  width: 100%;
+  height: 55px;
+  /* flex-direction: column; */
+  /*background: #a0c1f0; opcion i*/
+  background:#0b1973;
+  align-items: center;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.ContSide:hover {
+  /* background: #dddbdb; */
+  /*background: #f1f5fd; opcion i*/
+  background: #0b1973;
+}
+
+.iconF {
+  width: 40px;
+  color: #fff;
+}
+
+
+.ContSide span {
+  font-size: 20px;
+  margin-left: 10px;
+  font-weight: bold;
+  color: #fff;
+  line-height: 1;
+}
+
+.active span {
+  color: #fa6e06;
+}
+.active .iconF {
+  color: #fa6e06;
+}
+.active .ContSide {
+  background: #0b1973;
+}
+
+.contenedorImg {
+  display: flex;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.ImgPerfil {
+  height: 100px;
+  height: 100px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.SideBar.oculto {
+  display: none;
+}
+
+.BotonOcultar {
+  flex-direction: column;
+  width: 100%;
+  height: 50px;
+  bottom: 10px;
+  position: absolute;
+  right: 0%;
+  border-radius: 25px;
+}
+
+.BotonOcultar.mostrar {
+  display: none;
+}
+
+.BotonMostrar {
+  width: 100px;
+  height: 50px;
+  position: absolute;
+  bottom: 10px;
+  background: #4f39a4;
+  border-radius: 25px;
+}
+
+.BotonMostrar.oculto {
+  display: none;
+}
