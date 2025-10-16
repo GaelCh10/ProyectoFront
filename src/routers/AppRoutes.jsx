@@ -40,6 +40,8 @@ import AEvaluacionPage from "../pages/AdministradorPage/AEvaluacionPage";
 import APreguntasPage from "../pages/AdministradorPage/APreguntasPage";
 import Evaluacion from "../components/evaluacion/Evaluacion";
 import ACalificacionEstudiantes from "../pages/AdministradorPage/ACalificacionEstudiantes";
+import HandModel from "../components/detector/ManoVirtual";
+import DetectorInteractivo from "../components/detector/ManoInteractiva";
 
 export default function AppRoutes() {
   return (
@@ -290,6 +292,14 @@ export default function AppRoutes() {
         element={
           <PrivateRoute acceso="acceso">
             <DetectorSenias />
+          </PrivateRoute>
+        }
+      />
+
+      <Route path="/ManoVirtual"
+        element={
+          <PrivateRoute acceso="acceso">
+            <DetectorInteractivo />
           </PrivateRoute>
         }
       />
