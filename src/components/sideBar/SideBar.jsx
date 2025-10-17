@@ -13,6 +13,7 @@ import {
   faUser,
   faComments,
   faLanguage,
+  faHand,
 } from "@fortawesome/free-solid-svg-icons";
 import { AuthContext } from "../../context/AuthContext";
 import { SideContext } from "../../context/SideBarContext";
@@ -54,11 +55,9 @@ export default function SideBar() {
         <>
           <div className="flex w-full absolute flex-row top-16">
             <div
-              className={`SideBar ${
-                sideActivo ? "" : "oculto"
-              } transform transition-transform duration-300 ease-in-out ${
-                sideActivo ? "translate-x-0" : "-translate-x-full"
-              }`}
+              className={`SideBar ${sideActivo ? "" : "oculto"
+                } transform transition-transform duration-300 ease-in-out ${sideActivo ? "translate-x-0" : "-translate-x-full"
+                }`}
             >
               {/* <div className="contenedorImg">
               <img className="ImgPerfil" src={logo} />
@@ -182,6 +181,41 @@ export default function SideBar() {
                         </div>
                       </NavLink>
                     </li>
+                    <li>
+                      <NavLink
+                        activeclassname="active"
+                        to={"/manointeractiva"}
+                        className="nav"
+                      >
+                        <div className="ContSide">
+                          <FontAwesomeIcon
+                            className="iconF"
+                            icon={faCamera} // Re-usamos el ícono de cámara
+                            size="xl"
+                          />
+                          <span>Detector Interactivo</span>
+                        </div>
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink
+                        activeclassname="active"
+                        to={"/manovirtual"}
+                        className="nav"
+                      >
+                        <div className="ContSide">
+                          <FontAwesomeIcon
+                            className="iconF"
+                            icon={faHand} // Usamos el ícono de mano
+                            size="xl"
+                          />
+                          <span>Mano Virtual</span>
+                        </div>
+                      </NavLink>
+                    </li>
+
+
+
                     <li>
                       <NavLink
                         activeclassname="active"

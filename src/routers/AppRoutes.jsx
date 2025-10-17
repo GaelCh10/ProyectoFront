@@ -40,7 +40,7 @@ import AEvaluacionPage from "../pages/AdministradorPage/AEvaluacionPage";
 import APreguntasPage from "../pages/AdministradorPage/APreguntasPage";
 import Evaluacion from "../components/evaluacion/Evaluacion";
 import ACalificacionEstudiantes from "../pages/AdministradorPage/ACalificacionEstudiantes";
-import HandModel from "../components/detector/ManoVirtual";
+import AbecedarioInteractivo from "../components/mano/mano";
 import DetectorInteractivo from "../components/detector/ManoInteractiva";
 
 export default function AppRoutes() {
@@ -296,10 +296,18 @@ export default function AppRoutes() {
         }
       />
 
-      <Route path="/ManoVirtual"
+      <Route path="/manointeractiva"
         element={
           <PrivateRoute acceso="acceso">
             <DetectorInteractivo />
+          </PrivateRoute>
+        }
+      />
+
+      <Route path="/manovirtual"
+        element={
+          <PrivateRoute acceso="acceso">
+            <AbecedarioInteractivo />
           </PrivateRoute>
         }
       />
