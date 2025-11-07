@@ -42,6 +42,11 @@ import Evaluacion from "../components/evaluacion/Evaluacion";
 import ACalificacionEstudiantes from "../pages/AdministradorPage/ACalificacionEstudiantes";
 import AbecedarioInteractivo from "../components/mano/mano";
 import DetectorInteractivo from "../components/detector/ManoInteractiva";
+import CursosEstandarPage from "../pages/CursosEstandarPage";
+import EvaluacionE from "../components/cursoEspecial/evaluacion";
+import ContenidoEs from "../components/cursoEspecial/contenidoEs";
+import CursosEspeciales from "../components/cursoEspecial/cursosEspeciales";
+
 
 export default function AppRoutes() {
   return (
@@ -70,6 +75,7 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
+      {/* pagina principal */}
       <Route
         path="/home"
         element={
@@ -78,14 +84,8 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
-      <Route
-        path="/cursos"
-        element={
-          <PrivateRoute acceso="acceso">
-            <CursosPage />
-          </PrivateRoute>
-        }
-      />
+
+      {/* ruta al diccionario */}
       <Route
         path="/diccionario"
         element={
@@ -94,14 +94,18 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
+
+
+      {/* rutas a las paginas de los cursos */}
       <Route
-        path="/cursos/curso/evaluacion/:id"
+        path="/cursos"
         element={
           <PrivateRoute acceso="acceso">
-            <Evaluacion />
+            <CursosPage />
           </PrivateRoute>
         }
       />
+
       <Route
         path="/cursos/categoria/:id"
         element={
@@ -134,6 +138,54 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
+
+      <Route
+        path="/cursos/curso/evaluacion/:id"
+        element={
+          <PrivateRoute acceso="acceso">
+            <Evaluacion />
+          </PrivateRoute>
+        }
+      />
+
+      {/* rutas al curso LS estandar */}
+      <Route
+        path="/cursosInternacional"
+        element={
+          <PrivateRoute acceso="acceso">
+            <CursosEstandarPage />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/cursosInternacional/curso/:id"
+        element={
+          <PrivateRoute acceso="acceso">
+            <CursosEspeciales />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/cursosInternacional/curso/tema/:id"
+        element={
+          <PrivateRoute acceso="acceso">
+            <ContenidoEs />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/cursosInternacional/curso/evaluacion/:id"
+        element={
+          <PrivateRoute acceso="acceso">
+            <EvaluacionE />
+          </PrivateRoute>
+        }
+      />
+
+      {/*rutas a las paginas de los juegos */}
       <Route
         path="/juegos"
         element={
@@ -287,6 +339,8 @@ export default function AppRoutes() {
         }
       />
 
+
+      {/* camara interactiva */}
       <Route
         path="/practicar"
         element={
@@ -295,7 +349,7 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
-
+      {/* camara y mano interactiva */}
       <Route path="/manointeractiva"
         element={
           <PrivateRoute acceso="acceso">
@@ -304,6 +358,7 @@ export default function AppRoutes() {
         }
       />
 
+      {/* mano virtual con opciones a señas */}
       <Route path="/manovirtual"
         element={
           <PrivateRoute acceso="acceso">
@@ -312,6 +367,7 @@ export default function AppRoutes() {
         }
       />
 
+      {/* traductor de voz a seña */}
       <Route
         path="/traductor"
         element={
@@ -320,7 +376,7 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
-
+      {/* rutas al foro y sus paginas */}
       <Route
         path="/foro"
         element={
@@ -337,6 +393,10 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
+
+
+
+
       {/*Rutas opara el modulo de administraodr */}
       <Route
         path="/admin/cursos"
@@ -346,8 +406,8 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
-      
-       <Route
+
+      <Route
         path="/admin/cursos/:id"
         element={
           <PrivateRoute acceso="acceso">
@@ -355,7 +415,7 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
-      
+
       <Route
         path="/admin/evaluacion"
         element={
@@ -380,6 +440,8 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
+
+      {/* ruta aL perfil */}
       <Route
         path="/perfil"
         element={

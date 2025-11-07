@@ -14,6 +14,7 @@ import {
   faComments,
   faLanguage,
   faHand,
+  faAtlas,
 } from "@fortawesome/free-solid-svg-icons";
 import { AuthContext } from "../../context/AuthContext";
 import { SideContext } from "../../context/SideBarContext";
@@ -213,6 +214,25 @@ export default function SideBar() {
                         </div>
                       </NavLink>
                     </li>
+                    <li>
+                      <NavLink
+                        activeclassname="active"
+                        to={"/cursosInternacional"}
+                        className="nav"
+                      >
+                        <div className="ContSide">
+                          <FontAwesomeIcon
+                            className="iconF"
+                            icon={faAtlas} // Re-usamos el ícono de cámara
+                            size="xl"
+                          />
+                          <span>Cursos Especiales</span>
+                        </div>
+                      </NavLink>
+                    </li>
+
+
+
 
 
 

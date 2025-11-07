@@ -35,6 +35,7 @@ const SIGNS = {
     'V': { thumb: BENT, index: STRETCHED, middle: STRETCHED, ring: BENT, pinky: BENT },
     'W': { thumb: BENT, index: STRETCHED, middle: STRETCHED, ring: STRETCHED, pinky: BENT },
     'Y': { thumb: STRETCHED, index: BENT, middle: BENT, ring: BENT, pinky: STRETCHED },
+    'BASE': { thumb: STRETCHED, index: STRETCHED, middle: STRETCHED, ring: STRETCHED, pinky: STRETCHED }, // <-- AÑADE ESTA LÍNEA
 };
 
 const HandModel = memo(({ signToShow }) => {

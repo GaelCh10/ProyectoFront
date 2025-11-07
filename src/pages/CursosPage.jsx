@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
+import React, {  useEffect, useState } from "react";
 import axios from "axios";
 import { Url } from "../BackUrl";
 import BotonCurso from "../components/elementos/BotonCurso";
