@@ -12,30 +12,33 @@ const THUMB_A_SIDE = Math.PI / 6;
 const textureLoader =new THREE.TextureLoader();
 
 const SIGNS = {
-    'A': { thumb: STRETCHED, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
-    'B': { thumb: BENT, index: STRETCHED, middle: STRETCHED, ring: STRETCHED, pinky: STRETCHED },
-    'C': { thumb: BENT, index: MEDIUM_BENT, middle: MEDIUM_BENT, ring: MEDIUM_BENT, pinky: MEDIUM_BENT },
-    'D': { thumb: BENT, index: STRETCHED, middle: BENT, ring: BENT, pinky: BENT },
-    'E': { thumb: BENT, index: HALF_BENT, middle: HALF_BENT, ring: HALF_BENT, pinky: HALF_BENT },
-    'F': { thumb: BENT, index: MEDIUM_BENT, middle: STRETCHED, ring: BENT, pinky: BENT },
-    'G': { thumb: BENT, index: STRETCHED, middle: BENT, ring: BENT, pinky: BENT },
-    'H': { thumb: BENT, index: STRETCHED, middle: STRETCHED, ring: BENT, pinky: BENT },
-    'I': { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: STRETCHED },
-    'J': { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: STRETCHED },
-    'K': { thumb: BENT, index: STRETCHED, middle: BENT, ring: BENT, pinky: BENT },
-    'L': { thumb: STRETCHED, index: STRETCHED, middle: BENT, ring: BENT, pinky: BENT },
-    'M': { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
-    'N': { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
-    'O': { thumb: BENT, index: HALF_BENT, middle: HALF_BENT, ring: HALF_BENT, pinky: HALF_BENT },
-    'P': { thumb: BENT, index: STRETCHED, middle: BENT, ring: BENT, pinky: BENT },
-    'R': { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
-    'S': { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
-    'T': { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
-    'U': { thumb: BENT, index: STRETCHED, middle: STRETCHED, ring: BENT, pinky: BENT },
-    'V': { thumb: BENT, index: STRETCHED, middle: STRETCHED, ring: BENT, pinky: BENT },
-    'W': { thumb: BENT, index: STRETCHED, middle: STRETCHED, ring: STRETCHED, pinky: BENT },
-    'Y': { thumb: STRETCHED, index: BENT, middle: BENT, ring: BENT, pinky: STRETCHED },
-    'BASE': { thumb: STRETCHED, index: STRETCHED, middle: STRETCHED, ring: STRETCHED, pinky: STRETCHED }, // <-- AÑADE ESTA LÍNEA
+  'A': { thumb: STRETCHED, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
+  'B': { thumb: BENT, index: STRETCHED, middle: STRETCHED, ring: STRETCHED, pinky: STRETCHED },
+  'C': { thumb: BENT, index: MEDIUM_BENT, middle: MEDIUM_BENT, ring: MEDIUM_BENT, pinky: MEDIUM_BENT },
+  'D': { thumb: BENT, index: STRETCHED, middle: BENT, ring: BENT, pinky: BENT },
+  'E': { thumb: BENT, index: HALF_BENT, middle: HALF_BENT, ring: HALF_BENT, pinky: HALF_BENT },
+  'F': { thumb: BENT, index: MEDIUM_BENT, middle: STRETCHED, ring: BENT, pinky: BENT },
+  'G': { thumb: STRETCHED, index: STRETCHED, middle: BENT, ring: BENT, pinky: BENT },
+  'H': { thumb: STRETCHED, index: STRETCHED, middle: STRETCHED, ring: BENT, pinky: BENT },
+  'I': { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: STRETCHED },
+  'J': { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: STRETCHED },
+  'K': { thumb: BENT, index: STRETCHED, middle: MEDIUM_BENT, ring: BENT, pinky: BENT },
+  'L': { thumb: STRETCHED, index: STRETCHED, middle: BENT, ring: BENT, pinky: BENT },
+  'M': { thumb: BENT, index: STRETCHED, middle: STRETCHED, ring: STRETCHED, pinky: BENT },
+  'N': { thumb: BENT, index: STRETCHED, middle: STRETCHED, ring: BENT, pinky: BENT },
+  'Ñ': { thumb: BENT, index: STRETCHED, middle: STRETCHED, ring: BENT, pinky: BENT },
+  'O': { thumb: BENT, index: HALF_BENT, middle: HALF_BENT, ring: HALF_BENT, pinky: HALF_BENT },
+  'P': { thumb: BENT, index: STRETCHED, middle: MEDIUM_BENT, ring: BENT, pinky: BENT },
+  'Q': { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
+  'R': { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
+  'S': { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
+  'T': { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
+  'U': { thumb: BENT, index: STRETCHED, middle: STRETCHED, ring: BENT, pinky: BENT },
+  'V': { thumb: BENT, index: STRETCHED, middle: STRETCHED, ring: BENT, pinky: BENT },
+  'W': { thumb: BENT, index: STRETCHED, middle: STRETCHED, ring: STRETCHED, pinky: BENT },
+  'X': { thumb: BENT, index: HALF_BENT, middle: BENT, ring: BENT, pinky: BENT },
+  'Y': { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: STRETCHED },
+  'Z': { thumb: BENT, index: STRETCHED, middle: BENT, ring: BENT, pinky: BENT },
 };
 
 const HandModel = memo(({ signToShow }) => {
@@ -146,7 +149,7 @@ const HandModel = memo(({ signToShow }) => {
                 fingerArticulations[fingerName].forEach(segment => {
                     if (fingerName === 'thumb') {
                         // Lógica del pulgar...
-                        if (signName === 'A') {
+                        if (signName === 'A' || signName === 'Y' || signName === 'G' || signName === 'H' || signName === 'L') {
                             segment.rotation.z = -THUMB_A_SIDE;
                             segment.rotation.y = STRETCHED;
                             segment.rotation.x = STRETCHED;

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import * as tf from "@tensorflow/tfjs";
 
-export default function DetectorSenias() {
+export default function DetectorSenias({ onLetraDetectada }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [session, setSession] = useState(null);
@@ -194,18 +194,30 @@ export default function DetectorSenias() {
       const detections = postprocessOutput(outputTensor, preprocessInfo);
 
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      //aqui
+      //if (detections.length > 0) {
+      // Tomamos la detección con más confianza
+      //const best = detections[0];
+      // drawBoundingBox(ctx, best.classId, best.confidence, ...best.box);
 
+      // Actualizamos la letra detectada
+      //  setLetra(best.className);
+      //} else {
+      // Si no detecta nada, limpiamos el estado
+      //  setLetra("");
+      //}
       if (detections.length > 0) {
-        // Tomamos la detección con más confianza
         const best = detections[0];
         drawBoundingBox(ctx, best.classId, best.confidence, ...best.box);
-
-        // Actualizamos la letra detectada
         setLetra(best.className);
+        if (onLetraDetectada) onLetraDetectada(best.className); // <-- notificar al padre
       } else {
-        // Si no detecta nada, limpiamos el estado
         setLetra("");
+        if (onLetraDetectada) onLetraDetectada("");
       }
+
+
+      //hasta aqui
     } finally {
       tf.engine().endScope();
     }
@@ -282,9 +294,8 @@ export default function DetectorSenias() {
 
           <button
             onClick={(e) => setDetectar(!detectar)}
-            className={`px-4 mt-4 text-2xl py-2 rounded-md ${
-              detectar ? "bg-red-500" : "bg-[#0b1973]"
-            } text-white`}
+            className={`px-4 mt-4 text-2xl py-2 rounded-md ${detectar ? "bg-red-500" : "bg-[#0b1973]"
+              } text-white`}
           >
             {detectar ? "Desactivar" : "Activar"}
           </button>
