@@ -46,11 +46,16 @@ import CursosEstandarPage from "../pages/CursosEstandarPage";
 import EvaluacionE from "../components/cursoEspecial/evaluacion";
 import ContenidoEs from "../components/cursoEspecial/contenidoEs";
 import CursosEspeciales from "../components/cursoEspecial/cursosEspeciales";
+import HandModel from "../components/detector/ManoVirtual";
+import DetectorDinamico from "../components/detectordinamico/DetectorDinamico";
+
 
 
 export default function AppRoutes() {
   return (
     <Routes>
+    #ruta de prueba
+    <Route path="/handmodel" element={<HandModel />} />
       <Route
         path="/"
         element={
@@ -59,6 +64,9 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
+      #ruta detector
+      <Route path="/detectorDinamico" element={<DetectorDinamico />} />
+
       <Route
         path="/recuperar"
         element={

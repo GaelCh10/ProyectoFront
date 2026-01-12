@@ -232,6 +232,24 @@ export default function SideBar() {
                     </li>
 
 
+                    <li>
+                      <NavLink
+                        activeclassname="active"
+                        to={"/detectordinamico"}
+                        className="nav"
+                      >
+                        <div className="ContSide">
+                          <FontAwesomeIcon
+                            className="iconF"
+                            icon={faCamera}
+                            size="xl"
+                          />
+                          <span>Detector de señas dinamico</span>
+                        </div>
+                      </NavLink>
+                    </li>
+
+
 
 
 

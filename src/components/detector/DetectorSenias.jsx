@@ -32,7 +32,7 @@ export default function DetectorSenias({ onLetraDetectada }) {
     "W",
     "Y",
   ];
-
+// /modelo/model.json
   useEffect(() => {
     const cargarModelo = async () => {
       const model = await tf.loadGraphModel("/modelo/model.json");
