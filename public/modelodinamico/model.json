@@ -137,7 +137,7 @@
                             "name": "output_layer",
                             "trainable": true,
                             "dtype": "float32",
-                            "units": 3,
+                            "units": 6,
                             "activation": "softmax",
                             "use_bias": true,
                             "kernel_initializer": {"class_name": "GlorotUniform", "config": {"seed": null}},
@@ -183,8 +183,8 @@
                 {"name": "lstm_3/lstm_cell/kernel", "shape": [128, 256], "dtype": "float32"},
                 {"name": "lstm_3/lstm_cell/recurrent_kernel", "shape": [64, 256], "dtype": "float32"},
                 {"name": "lstm_3/lstm_cell/bias", "shape": [256], "dtype": "float32"},
-                {"name": "output_layer/kernel", "shape": [32, 3], "dtype": "float32"},
-                {"name": "output_layer/bias", "shape": [3], "dtype": "float32"}
+                {"name": "output_layer/kernel", "shape": [32, 6], "dtype": "float32"},
+                {"name": "output_layer/bias", "shape": [6], "dtype": "float32"}
             ]
         }
     ]
