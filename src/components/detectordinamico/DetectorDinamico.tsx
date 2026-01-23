@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import Webcam from "react-webcam";
+import { DrawingUtils, FilesetResolver, HandLandmarker, PoseLandmarker } from '@mediapipe/tasks-vision';
 import * as tf from "@tensorflow/tfjs";
-import { FilesetResolver, PoseLandmarker, HandLandmarker, DrawingUtils } from '@mediapipe/tasks-vision';
+import { useEffect, useRef, useState } from "react";
+import Webcam from "react-webcam";
 
 // Definimos la interfaz para las props (si la necesitas)
 interface DetectorProps {
