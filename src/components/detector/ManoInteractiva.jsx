@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import  { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import * as tf from "@tensorflow/tfjs";
 import HandModel from "./ManoVirtual";
@@ -236,7 +236,7 @@ return (
             )}
 
             <h2 className="text-[#fa6e06] text-center font-bold text-6xl mt-2 letraC3 leading-9 m-0 p-0 2xl:leading-normal">
-                Detector de señas con IA
+                Detector de señas interactivo con IA
             </h2>
 
             {loading && <p>Cargando modelo...</p>}

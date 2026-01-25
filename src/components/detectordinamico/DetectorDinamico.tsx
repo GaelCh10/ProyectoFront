@@ -206,7 +206,7 @@ export default function DetectorSeniasDinamicas({ onLetraDetectada }: DetectorPr
   }, [detectar]);
 
   return (
-    <div className="flex w-full items-center flex-col min-h-screen bg-gray-900 text-white p-5">
+    <div className="flex w-full items-center flex-col min-h-screen bg-white text-white p-5">
       <h2 className="text-[#fa6e06] text-center font-bold text-4xl mb-4">
         Reconocimiento de Señas Dinámicas
       </h2>
@@ -216,7 +216,7 @@ export default function DetectorSeniasDinamicas({ onLetraDetectada }: DetectorPr
       <div className="flex w-full flex-col lg:flex-row items-center justify-center gap-8 relative mt-4">
         
         {/* Contenedor de Video con Guía Visual */}
-        <div className="relative border-4 border-[#fa6e06] rounded-xl overflow-hidden shadow-2xl bg-black w-[640px] h-[480px]">
+        <div className="relative border-4 border-[#fa6e06] rounded-xl overflow-hidden shadow-2xl bg-white w-[640px] h-[480px]">
              {/* Guía visual de posicionamiento */}
              {detectar && (
                 <div className="absolute inset-0 border-2 border-dashed border-white opacity-30 z-10 pointer-events-none flex items-center justify-center">
@@ -272,7 +272,7 @@ export default function DetectorSeniasDinamicas({ onLetraDetectada }: DetectorPr
                 detectar ? "bg-red-600 hover:bg-red-700 shadow-red-500/50" : "bg-blue-600 hover:bg-blue-700 shadow-blue-500/50"
             } text-white shadow-lg`}
           >
-            {loading ? "Iniciando..." : detectar ? "⏹ Detener Detección" : "▶ Iniciar Detección"}
+            {loading ? "Iniciando..." : detectar ? " Detener Detección" : " Iniciar Detección"}
           </button>
         </div>
       </div>

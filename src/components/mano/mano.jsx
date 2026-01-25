@@ -1,410 +1,207 @@
-/* eslint-disable no-irregular-whitespace */
-
-// AbecedarioInteractivo.jsx
 import { useState, useEffect, useRef } from "react";
-import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import "./mano.css"; // Importamos los estilos
+import HandModel from "../detector/ManoVirtual";
 
-// --- CONSTANTES (Las movemos fuera del componente para que no se redeclaren) ---
-const STRETCHED = 0;
-const BENT = Math.PI / 1.7;
-const HALF_BENT = Math.PI / 2;
-const MEDIUM_BENT = Math.PI / 3;
-const THUMB_A_SIDE = Math.PI / 6;
-const THUMB_B_TUCK = Math.PI * 0.9;
+export default function PanelDePruebas() {
+  const [currentSign, setCurrentSign] = useState("A");
+  
+  // Estados para la DEMO automática (Abecedario)
+  const [autoPlay, setAutoPlay] = useState(false);
+  
+  // Estados para el TRADUCTOR DE PALABRAS
+  const [inputText, setInputText] = useState("");
+  const [isPlayingWord, setIsPlayingWord] = useState(false);
+  const wordIndexRef = useRef(0); // Referencia para saber en qué letra vamos sin renderizar
 
-const SIGNS = {
-  A: { thumb: STRETCHED, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
-  B: {
-    thumb: BENT,
-    index: STRETCHED,
-    middle: STRETCHED,
-    ring: STRETCHED,
-    pinky: STRETCHED,
-  },
-  C: {
-    thumb: BENT,
-    index: MEDIUM_BENT,
-    middle: MEDIUM_BENT,
-    ring: MEDIUM_BENT,
-    pinky: MEDIUM_BENT,
-  },
-  D: { thumb: BENT, index: STRETCHED, middle: BENT, ring: BENT, pinky: BENT },
-  E: {
-    thumb: BENT,
-    index: HALF_BENT,
-    middle: HALF_BENT,
-    ring: HALF_BENT,
-    pinky: HALF_BENT,
-  },
-  F: {
-    thumb: BENT,
-    index: MEDIUM_BENT,
-    middle: STRETCHED,
-    ring: BENT,
-    pinky: BENT,
-  },
-  G: { thumb: BENT, index: STRETCHED, middle: BENT, ring: BENT, pinky: BENT },
-  H: {
-    thumb: BENT,
-    index: STRETCHED,
-    middle: STRETCHED,
-    ring: BENT,
-    pinky: BENT,
-  },
-  I: { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: STRETCHED },
-  J: { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: STRETCHED },
-  K: { thumb: BENT, index: STRETCHED, middle: BENT, ring: BENT, pinky: BENT },
-  L: {
-    thumb: STRETCHED,
-    index: STRETCHED,
-    middle: BENT,
-    ring: BENT,
-    pinky: BENT,
-  },
-  M: { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
-  N: { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
-  Ñ: { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
-  O: {
-    thumb: BENT,
-    index: HALF_BENT,
-    middle: HALF_BENT,
-    ring: HALF_BENT,
-    pinky: HALF_BENT,
-  },
-  P: { thumb: BENT, index: STRETCHED, middle: BENT, ring: BENT, pinky: BENT },
-  Q: { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
-  R: { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
-  S: { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
-  T: { thumb: BENT, index: BENT, middle: BENT, ring: BENT, pinky: BENT },
-  U: {
-    thumb: BENT,
-    index: STRETCHED,
-    middle: STRETCHED,
-    ring: BENT,
-    pinky: BENT,
-  },
-  V: {
-    thumb: BENT,
-    index: STRETCHED,
-    middle: STRETCHED,
-    ring: BENT,
-    pinky: BENT,
-  },
-  W: {
-    thumb: BENT,
-    index: STRETCHED,
-    middle: STRETCHED,
-    ring: STRETCHED,
-    pinky: BENT,
-  },
-  X: { thumb: BENT, index: HALF_BENT, middle: BENT, ring: BENT, pinky: BENT },
-  Y: {
-    thumb: STRETCHED,
-    index: BENT,
-    middle: BENT,
-    ring: BENT,
-    pinky: STRETCHED,
-  },
-  Z: { thumb: BENT, index: STRETCHED, middle: BENT, ring: BENT, pinky: BENT },
-};
+  const alphabet = [
+    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", 
+    "L", "M", "N", "Ñ", "O", "P", "Q", "R", "S", "T", "U", 
+    "V", "W", "X", "Y", "Z"
+  ];
 
-const fingerNames = ["thumb", "index", "middle", "ring", "pinky"];
+  
 
-export default function AbecedarioInteractivo() {
-  // 1. Usamos useState para manejar la seña actual (reemplaza a la variable global)
-  const [currentSign, setCurrentSign] = useState("C");
-
-  // 2. Usamos useRef para obtener el 'div' donde irá el canvas de Three.js
-  const handViewRef = useRef(null);
-
-  // 3. Usamos useRef para guardar objetos de Three.js que persisten entre renders
-  const threeJsObjects = useRef({});
-
-  // 4. useEffect para la lógica de Three.js
+  // --- EFECTO 1: DEMO ABECEDARIO ---
   useEffect(() => {
-    // --- CÓDIGO DE INICIALIZACIÓN (Solo se ejecuta una vez) ---
-    const handView = handViewRef.current;
-
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x333333);
-
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      handView.clientWidth / handView.clientHeight,
-      0.1,
-      1000
-    );
-    camera.position.set(0, 5, 15);
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(handView.clientWidth, handView.clientHeight);
-    handView.appendChild(renderer.domElement);
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-
-    // Luces y Material
-    scene.add(new THREE.AmbientLight(0xfffff0, 0.5));
-    const directionalLight = new THREE.DirectionalLight(0xeeeeee, 1);
-    directionalLight.position.set(-5, 0, 5);
-    scene.add(directionalLight);
-
-    const skinMaterial = new THREE.MeshStandardMaterial({
-      color: 0xe8c199,
-      metalness: 0.1,
-      roughness: 0.6,
-    });
-
-    // Articulaciones (las guardamos en el ref para acceder a ellas después)
-    const fingerArticulations = {
-      thumb: [],
-      index: [],
-      middle: [],
-      ring: [],
-      pinky: [],
-    };
-    threeJsObjects.current.fingerArticulations = fingerArticulations; // Guardamos la referencia
-
-    const standardLengths = [3, 2.5, 2];
-    const thumbLengths = [2.5, 2];
-
-    // Funciones para crear la mano (igual que en tu script)
-    function createSegment(length) {
-      const geometry = new THREE.CylinderGeometry(0.5, 0.5, length, 10);
-      const segment = new THREE.Mesh(geometry, skinMaterial);
-      geometry.rotateX(Math.PI / 2);
-      geometry.translate(0, 0, length / 2);
-      return segment;
+    let interval;
+    if (autoPlay) {
+      let index = 0;
+      interval = setInterval(() => {
+        setCurrentSign(alphabet[index]);
+        index = (index + 1) % alphabet.length;
+      }, 1500);
     }
+    return () => clearInterval(interval);
+  }, [autoPlay]);
 
-    function createFinger(name, basePosition, segmentLengths) {
-      const fingerRoot = new THREE.Object3D();
-      fingerRoot.position.copy(basePosition);
-      let currentParent = fingerRoot;
-      let currentZ = 0;
-      segmentLengths.forEach((length) => {
-        const segment = createSegment(length);
-        segment.position.set(0, 0, currentZ);
-        currentParent.add(segment);
-        fingerArticulations[name].push(segment);
-        currentZ = length;
-        currentParent = segment;
-      });
-      return fingerRoot;
-    }
-
-    // Crear Palma y Dedos
-    const palmGeometry = new THREE.BoxGeometry(7, 1, 5);
-    palmGeometry.translate(0, 0, 0.5);
-    const palm = new THREE.Mesh(palmGeometry, skinMaterial);
-    scene.add(palm);
-
-    palm.rotation.y = Math.PI; // Rotación para que mire al frente
-    palm.rotation.x = Math.PI / 2;
-    palm.rotation.z = -Math.PI * 2;
-
-    const thumb = createFinger(
-      "thumb",
-      new THREE.Vector3(-3.5, 0.7, -1),
-      thumbLengths
-    );
-    thumb.rotation.y = -Math.PI / 1.8;
-    thumb.rotation.z = -Math.PI / 16;
-    thumb.rotation.x = Math.PI * 4;
-    palm.add(thumb);
-
-    palm.add(
-      createFinger("index", new THREE.Vector3(-2.5, 0, 2.7), standardLengths)
-    );
-    palm.add(
-      createFinger("middle", new THREE.Vector3(-0.7, 0, 3), standardLengths)
-    );
-    palm.add(
-      createFinger("ring", new THREE.Vector3(1.2, 0, 2.65), standardLengths)
-    );
-    palm.add(
-      createFinger("pinky", new THREE.Vector3(3, 0, 2), standardLengths)
-    );
-
-    // Ciclo de Renderizado
-    const animate = () => {
-      requestAnimationFrame(animate);
-      controls.update();
-      renderer.render(scene, camera);
-    };
-    animate();
-
-    // Manejo de Redimensionamiento
-    const handleResize = () => {
-      const WIDTH = handView.clientWidth;
-      const HEIGHT = handView.clientHeight;
-      renderer.setSize(WIDTH, HEIGHT);
-      camera.aspect = WIDTH / HEIGHT;
-      camera.updateProjectionMatrix();
-    };
-    window.addEventListener("resize", handleResize);
-
-    // Función de Limpieza (se ejecuta cuando el componente se desmonta)
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      handView.removeChild(renderer.domElement);
-    };
-  }, []); // El array vacío `[]` asegura que este useEffect se ejecute SOLO UNA VEZ.
-
-  // 5. useEffect para ACTUALIZAR la mano (se ejecuta CADA VEZ que 'currentSign' cambia)
+  // --- EFECTO 2: REPRODUCTOR DE PALABRA ---
   useEffect(() => {
-    // Obtenemos las articulaciones que guardamos en el ref
-    const articulations = threeJsObjects.current.fingerArticulations;
-    if (!articulations) return; // Si aún no se ha inicializado, salimos
+    let wordInterval;
 
-    const angles = SIGNS[currentSign];
-    if (!angles) return; // Si la seña no existe, salimos
+    if (isPlayingWord && inputText.length > 0) {
+      // 1. Limpiamos el texto: Solo letras, sin espacios, mayúsculas
+      // (Si quieres que soporte espacios como pausas, habría que ajustar la lógica)
+      const cleanWord = inputText.toUpperCase().replace(/[^A-ZÑ]/g, '');
 
-    fingerNames.forEach((fingerName) => {
-      const angle = angles[fingerName];
-      articulations[fingerName].forEach((segment) => {
-        // Aquí va la misma lógica de rotación de tu script original
-        if (fingerName === "thumb") {
-          if (currentSign === "A") {
-            segment.rotation.z = -THUMB_A_SIDE;
-            segment.rotation.y = STRETCHED;
-            segment.rotation.x = STRETCHED;
-          } else if (currentSign === "C") {
-            segment.rotation.y = -Math.PI / 2.5;
-            segment.rotation.z = -Math.PI / 3;
-            segment.rotation.x = -Math.PI / 0.5;
-          } else if (currentSign === "B") {
-            segment.rotation.z = -THUMB_B_TUCK * 0.9;
-            segment.rotation.y = -angle * 0.5;
-            segment.rotation.x = angle * 0.1;
-          } else {
-            segment.rotation.y = Math.PI / 2;
-            segment.rotation.z = Math.PI / 45;
-            segment.rotation.x = Math.PI / 4;
-          }
+      if (cleanWord.length === 0) {
+        setIsPlayingWord(false);
+        return;
+      }
+
+      // Función para avanzar a la siguiente letra
+      const playNextLetter = () => {
+        if (wordIndexRef.current >= cleanWord.length) {
+          // Fin de la palabra
+          setIsPlayingWord(false);
+          wordIndexRef.current = 0;
+          clearInterval(wordInterval);
         } else {
-          segment.rotation.x = -angle;
+          // Mostrar letra actual
+          const letter = cleanWord[wordIndexRef.current];
+          // Solo reproducimos si la letra existe en nuestro diccionario (o abecedario)
+          // Esto evita errores si escriben números o símbolos raros
+          if (alphabet.includes(letter)) {
+             setCurrentSign(letter);
+          }
+          wordIndexRef.current++;
         }
-      });
-    });
-  }, [currentSign]); // Este array hace que el hook se ejecute cada vez que 'currentSign' cambie
+      };
 
-  // 6. El JSX (El HTML "traducido" a React)
+      // Reproducir la primera letra inmediatamente
+      if (wordIndexRef.current === 0) {
+        playNextLetter();
+      }
+
+      // Configurar el intervalo para las siguientes
+      wordInterval = setInterval(playNextLetter, 1300); // 1.3 segundos por letra
+    } else {
+      // Si se detiene manualmente
+      wordIndexRef.current = 0;
+    }
+
+    return () => clearInterval(wordInterval);
+  }, [isPlayingWord, inputText]);
+
+  // Manejador del botón "Reproducir Palabra"
+  const handlePlayWord = () => {
+    // Si ya está reproduciendo, lo paramos
+    if (isPlayingWord) {
+      setIsPlayingWord(false);
+      wordIndexRef.current = 0;
+      return;
+    }
+
+    // Detenemos la demo del abecedario si está activa
+    if (autoPlay) setAutoPlay(false);
+    
+    // Iniciamos la palabra
+    wordIndexRef.current = 0;
+    setIsPlayingWord(true);
+  };
+
   return (
-    // Usamos la clase que definimos en el CSS
-    <div className="abecedario-container">
-      {/* Usamos el 'ref' para decirle a Three.js dónde renderizar.
-              En React, 'class' se escribe 'className'.
-            */}
-      <div id="hand-view" ref={handViewRef}></div>
-
-      <div id="controls-view">
-        <h2>Abecedario LSM (A-Z)</h2>
-        <div id="button-controls">
-          {/* Los eventos 'onclick' se escriben 'onClick'.
-                      En lugar de llamar a una función global, cambiamos el estado.
-                    */}
-          <button className="lsm-button" onClick={() => setCurrentSign("A")}>
-            A <span className="button-desc">Puño cerrado.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("B")}>
-            B{" "}
-            <span className="button-desc">Mano abierta, dedos estirados.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("C")}>
-            C <span className="button-desc">Dedos curvos (Forma de C).</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("D")}>
-            D{" "}
-            <span className="button-desc">
-              Índice levantado, otros doblados.
-            </span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("E")}>
-            E{" "}
-            <span className="button-desc">Todos curvados hacia la palma.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("F")}>
-            F <span className="button-desc">Pinza con pulgar e índice.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("G")}>
-            G <span className="button-desc">Índice recto, pulgar al lado.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("H")}>
-            H <span className="button-desc">Índice y medio rectos juntos.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("I")}>
-            I <span className="button-desc">Meñique levantado.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("J")}>
-            J <span className="button-desc">Meñique levantado.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("K")}>
-            K{" "}
-            <span className="button-desc">
-              Medio separado (tipo paz), pulgar entre.
-            </span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("L")}>
-            L{" "}
-            <span className="button-desc">Pulgar e índice en forma de L.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("M")}>
-            M <span className="button-desc">Pulgar bajo tres dedos.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("N")}>
-            N <span className="button-desc">Pulgar bajo dos dedos.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("Ñ")}>
-            Ñ <span className="button-desc">N + Movimiento</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("O")}>
-            O <span className="button-desc">Punta de los dedos se tocan.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("P")}>
-            P <span className="button-desc">K invertida.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("Q")}>
-            Q{" "}
-            <span className="button-desc">
-              Pinza pulgar/índice hacia abajo.
-            </span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("R")}>
-            R{" "}
-            <span className="button-desc">Dedos índice y medio cruzados.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("S")}>
-            S <span className="button-desc">Puño cerrado (como 'A').</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("T")}>
-            T <span className="button-desc">Pulgar entre índice y medio.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("U")}>
-            U <span className="button-desc">Índice y medio rectos juntos.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("V")}>
-            V <span className="button-desc">Índice y medio separados.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("W")}>
-            W <span className="button-desc">Tres dedos rectos.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("X")}>
-            X <span className="button-desc">Índice doblado.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("Y")}>
-            Y <span className="button-desc">Pulgar y meñique levantados.</span>
-          </button>
-          <button className="lsm-button" onClick={() => setCurrentSign("Z")}>
-            Z <span className="button-desc">Índice arriba (dibujar Z).</span>
-          </button>
+    <div className="flex flex-col lg:flex-row h-full w-full bg-gray-100 overflow-hidden relative">
+      
+      {/* --- PANEL IZQUIERDO: CONTROLES --- */}
+      <div className="w-full lg:w-1/3 bg-white p-6 shadow-xl  flex flex-col h-[40vh] lg:h-full overflow-hidden">
+        
+        <div className="mb-4">
+          <h1 className="text-3xl font-bold text-[#fa6e06] mb-1">Laboratorio LSM</h1>
+          <p className="text-gray-500 text-xs">
+            Escribe una palabra o selecciona una seña.
+          </p>
         </div>
 
-        {/* El contenido de este <p> ahora está controlado por el estado 'currentSign'
-         */}
-        <p id="current-sign">Seña actual: {currentSign}</p>
+        {/* --- NUEVO: TRADUCTOR DE PALABRAS --- */}
+        <div className="bg-orange-50 p-4 rounded-xl border border-orange-200 mb-4 shadow-inner">
+            <label className="text-xs font-bold text-orange-600 uppercase mb-2 block">
+                Traductor de Texto
+            </label>
+            <div className="flex gap-2">
+                <input 
+                    type="text"
+                    value={inputText}
+                    onChange={(e) => {
+                        setInputText(e.target.value);
+                        setIsPlayingWord(false); // Detener si edita
+                    }}
+                    placeholder="Escribe aquí (ej: AMIGO)"
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 uppercase font-bold text-gray-700"
+                    maxLength={15}
+                />
+                <button
+                    onClick={handlePlayWord}
+                    disabled={!inputText}
+                    className={`px-4 rounded-lg font-bold text-white transition-all ${
+                        !inputText 
+                        ? "bg-gray-300 cursor-not-allowed"
+                        : isPlayingWord 
+                            ? "bg-red-500 hover:bg-red-600"
+                            : "bg-[#fa6e06] hover:bg-orange-600"
+                    }`}
+                >
+                    {isPlayingWord ? "⏹" : "▶"}
+                </button>
+            </div>
+            {isPlayingWord && (
+                <p className="text-xs text-orange-600 mt-2 animate-pulse">
+                    Reproduciendo: <b>{inputText.toUpperCase()}</b>...
+                </p>
+            )}
+        </div>
+
+        {/* Visor de letra actual */}
+        <div className="bg-gray-800 p-3 rounded-lg text-center mb-4 text-white shadow-md flex justify-between items-center px-6">
+            <span className="text-gray-400 text-xs uppercase tracking-widest">Seña Actual</span>
+            <span className="text-4xl font-black text-[#fa6e06]">{currentSign}</span>
+        </div>
+
+        {/* Botón de Demo Abecedario */}
+        <button
+          onClick={() => {
+              setAutoPlay(!autoPlay);
+              setIsPlayingWord(false); // Detener palabra si inicia demo
+          }}
+          className={`w-full mb-4 py-2 rounded-lg font-bold text-sm transition-all border ${
+            autoPlay 
+              ? "bg-red-50 border-red-200 text-red-600" 
+              : "bg-blue-50 border-blue-200 text-blue-600 hover:bg-blue-100"
+          }`}
+        >
+          {autoPlay ? "⏹ Detener Demo Abecedario" : "▶ Demo Abecedario Completo"}
+        </button>
+
+        {/* Grid de Botones con Scroll */}
+        <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+          
+          {/* Abecedario */}
+          <h3 className="text-[10px] font-bold text-gray-400 uppercase mb-2">Abecedario</h3>
+          <div className="grid grid-cols-5 gap-2 pb-4">
+            {alphabet.map((letter) => (
+              <button
+                key={letter}
+                onClick={() => {
+                  setAutoPlay(false);
+                  setIsPlayingWord(false);
+                  setCurrentSign(letter);
+                }}
+                className={`aspect-square rounded-md font-bold text-lg shadow-sm transition-all duration-200 ${
+                  currentSign === letter
+                    ? "bg-[#fa6e06] text-white scale-110 ring-2 ring-orange-300"
+                    : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
+                }`}
+              >
+                {letter}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* --- PANEL DERECHO: VISOR 3D --- */}
+      <div className="w-full lg:w-2/3 h-[60vh] lg:h-full relative bg-gray-200">
+        <div className="absolute inset-0">
+             <HandModel signToShow={currentSign} />
+        </div>
       </div>
     </div>
   );
