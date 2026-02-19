@@ -66,24 +66,18 @@ export default function DetectorInteractivo() {
 
 
   useEffect(() => {
-        // Solo contamos si se detectó una letra válida y la detección está activa
         if (letra && detectar && letra != "A") {
             const newCount = detectionCount + 1;
             setDetectionCount(newCount);
-
-            // Si el usuario ha hecho 5 detecciones, mostramos un mensaje
             if (newCount % 5 === 0) {
-                // Elegimos un mensaje aleatorio de la lista
                 const randomIndex = Math.floor(Math.random() * felicitaciones.length);
                 setFeedbackMessage(felicitaciones[randomIndex]);
-
-                // Hacemos que el mensaje desaparezca después de 4 segundos
                 setTimeout(() => {
                     setFeedbackMessage("");
                 }, 4000);
             }
         }
-    }, [letra]); // Se ejecuta cuando 'letra' cambia
+    }, [letra]); 
 
   const preprocesarVideo = (video) => {
     const inputSize = 640;

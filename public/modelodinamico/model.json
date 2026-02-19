@@ -35,7 +35,7 @@
                             "stateful": false,
                             "unroll": false,
                             "zero_output_for_mask": false,
-                            "units": 64,
+                            "units": 128,
                             "activation": "relu",
                             "recurrent_activation": "sigmoid",
                             "use_bias": true,
@@ -50,12 +50,64 @@
                         "inbound_nodes": [[["input_layer_lsm", 0, 0, {}]]]
                     },
                     {
+                        "class_name": "Dropout",
+                        "config": {
+                            "name": "dropout",
+                            "trainable": true,
+                            "dtype": "float32",
+                            "rate": 0.2,
+                            "seed": null,
+                            "noise_shape": null
+                        },
+                        "name": "dropout",
+                        "inbound_nodes": [[["lstm_1", 0, 0, {}]]]
+                    },
+                    {
                         "class_name": "LSTM",
                         "config": {
                             "name": "lstm_2",
                             "trainable": true,
                             "dtype": "float32",
                             "return_sequences": true,
+                            "return_state": false,
+                            "go_backwards": false,
+                            "stateful": false,
+                            "unroll": false,
+                            "zero_output_for_mask": false,
+                            "units": 256,
+                            "activation": "relu",
+                            "recurrent_activation": "sigmoid",
+                            "use_bias": true,
+                            "kernel_initializer": {"class_name": "GlorotUniform", "config": {"seed": null}},
+                            "recurrent_initializer": {"class_name": "Orthogonal", "config": {"seed": null, "gain": 1.0}},
+                            "bias_initializer": {"class_name": "Zeros", "config": {}},
+                            "unit_forget_bias": true,
+                            "dropout": 0.0,
+                            "recurrent_dropout": 0.0
+                        },
+                        "name": "lstm_2",
+                        "inbound_nodes": [[["dropout", 0, 0, {}]]]
+                    },
+                    {
+                        "class_name": "Dropout",
+                        "config": {
+                            "name": "dropout_1",
+                            "trainable": true,
+                            "dtype": "float32",
+                            "rate": 0.2,
+                            "seed": null,
+                            "noise_shape": null
+                        },
+                        "name": "dropout_1",
+                        "inbound_nodes": [[["lstm_2", 0, 0, {}]]]
+                    },
+                    {
+                        "class_name": "LSTM",
+                        "config": {
+                            "name": "lstm_3",
+                            "trainable": true,
+                            "dtype": "float32",
+                            "return_sequences": false,
                             "return_state": false,
                             "go_backwards": false,
                             "stateful": false,
@@ -72,34 +124,21 @@
                             "dropout": 0.0,
                             "recurrent_dropout": 0.0
                         },
-                        "name": "lstm_2",
-                        "inbound_nodes": [[["lstm_1", 0, 0, {}]]]
+                        "name": "lstm_3",
+                        "inbound_nodes": [[["dropout_1", 0, 0, {}]]]
                     },
                     {
-                        "class_name": "LSTM",
+                        "class_name": "Dropout",
                         "config": {
-                            "name": "lstm_3",
+                            "name": "dropout_2",
                             "trainable": true,
                             "dtype": "float32",
-                            "return_sequences": false,
-                            "return_state": false,
-                            "go_backwards": false,
-                            "stateful": false,
-                            "unroll": false,
-                            "zero_output_for_mask": false,
-                            "units": 64,
-                            "activation": "relu",
-                            "recurrent_activation": "sigmoid",
-                            "use_bias": true,
-                            "kernel_initializer": {"class_name": "GlorotUniform", "config": {"seed": null}},
-                            "recurrent_initializer": {"class_name": "Orthogonal", "config": {"seed": null, "gain": 1.0}},
-                            "bias_initializer": {"class_name": "Zeros", "config": {}},
-                            "unit_forget_bias": true,
-                            "dropout": 0.0,
-                            "recurrent_dropout": 0.0
+                            "rate": 0.2,
+                            "seed": null,
+                            "noise_shape": null
                         },
-                        "name": "lstm_3",
-                        "inbound_nodes": [[["lstm_2", 0, 0, {}]]]
+                        "name": "dropout_2",
+                        "inbound_nodes": [[["lstm_3", 0, 0, {}]]]
                     },
                     {
                         "class_name": "Dense",
@@ -107,14 +146,14 @@
                             "name": "dense_1",
                             "trainable": true,
                             "dtype": "float32",
-                            "units": 64,
+                            "units": 128,
                             "activation": "relu",
                             "use_bias": true,
                             "kernel_initializer": {"class_name": "GlorotUniform", "config": {"seed": null}},
                             "bias_initializer": {"class_name": "Zeros", "config": {}}
                         },
                         "name": "dense_1",
-                        "inbound_nodes": [[["lstm_3", 0, 0, {}]]]
+                        "inbound_nodes": [[["dropout_2", 0, 0, {}]]]
                     },
                     {
                         "class_name": "Dense",
@@ -122,7 +161,7 @@
                             "name": "dense_2",
                             "trainable": true,
                             "dtype": "float32",
-                            "units": 32,
+                            "units": 64,
                             "activation": "relu",
                             "use_bias": true,
                             "kernel_initializer": {"class_name": "GlorotUniform", "config": {"seed": null}},
@@ -158,7 +197,7 @@
                 "class_name": "Adam",
                 "config": {
                     "name": "adam",
-                    "learning_rate": 0.001,
+                    "learning_rate": 0.0000625,
                     "beta_1": 0.9,
                     "beta_2": 0.999,
                     "epsilon": 1e-07
@@ -170,20 +209,20 @@
         {
             "paths": ["group1-shard1of1.bin"],
             "weights": [
-                {"name": "dense_1/kernel", "shape": [64, 64], "dtype": "float32"},
-                {"name": "dense_1/bias", "shape": [64], "dtype": "float32"},
-                {"name": "dense_2/kernel", "shape": [64, 32], "dtype": "float32"},
-                {"name": "dense_2/bias", "shape": [32], "dtype": "float32"},
-                {"name": "lstm_1/lstm_cell/kernel", "shape": [258, 256], "dtype": "float32"},
-                {"name": "lstm_1/lstm_cell/recurrent_kernel", "shape": [64, 256], "dtype": "float32"},
-                {"name": "lstm_1/lstm_cell/bias", "shape": [256], "dtype": "float32"},
-                {"name": "lstm_2/lstm_cell/kernel", "shape": [64, 512], "dtype": "float32"},
-                {"name": "lstm_2/lstm_cell/recurrent_kernel", "shape": [128, 512], "dtype": "float32"},
-                {"name": "lstm_2/lstm_cell/bias", "shape": [512], "dtype": "float32"},
-                {"name": "lstm_3/lstm_cell/kernel", "shape": [128, 256], "dtype": "float32"},
-                {"name": "lstm_3/lstm_cell/recurrent_kernel", "shape": [64, 256], "dtype": "float32"},
-                {"name": "lstm_3/lstm_cell/bias", "shape": [256], "dtype": "float32"},
-                {"name": "output_layer/kernel", "shape": [32, 6], "dtype": "float32"},
+                {"name": "dense_1/kernel", "shape": [128, 128], "dtype": "float32"},
+                {"name": "dense_1/bias", "shape": [128], "dtype": "float32"},
+                {"name": "dense_2/kernel", "shape": [128, 64], "dtype": "float32"},
+                {"name": "dense_2/bias", "shape": [64], "dtype": "float32"},
+                {"name": "lstm_1/lstm_cell/kernel", "shape": [258, 512], "dtype": "float32"},
+                {"name": "lstm_1/lstm_cell/recurrent_kernel", "shape": [128, 512], "dtype": "float32"},
+                {"name": "lstm_1/lstm_cell/bias", "shape": [512], "dtype": "float32"},
+                {"name": "lstm_2/lstm_cell/kernel", "shape": [128, 1024], "dtype": "float32"},
+                {"name": "lstm_2/lstm_cell/recurrent_kernel", "shape": [256, 1024], "dtype": "float32"},
+                {"name": "lstm_2/lstm_cell/bias", "shape": [1024], "dtype": "float32"},
+                {"name": "lstm_3/lstm_cell/kernel", "shape": [256, 512], "dtype": "float32"},
+                {"name": "lstm_3/lstm_cell/recurrent_kernel", "shape": [128, 512], "dtype": "float32"},
+                {"name": "lstm_3/lstm_cell/bias", "shape": [512], "dtype": "float32"},
+                {"name": "output_layer/kernel", "shape": [64, 6], "dtype": "float32"},
                 {"name": "output_layer/bias", "shape": [6], "dtype": "float32"}
             ]
         }

@@ -159,7 +159,7 @@ export default function DetectorSeniasDinamicas({ onLetraDetectada }: DetectorPr
             const maxIdx = data.indexOf(maxVal);
 
             // 1. Umbral de confianza
-            if (maxVal > 0.74) { 
+            if (maxVal > 0.80) { 
                 const candidateLabel = CLASSES[maxIdx];
 
                 // 2. Lógica de Consistencia (Smoothing)

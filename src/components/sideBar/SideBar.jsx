@@ -166,7 +166,7 @@ export default function SideBar() {
                         </div>
                       </NavLink>
                     </li>
-                    <li>
+                    {/* <li>
                       <NavLink
                         activeclassname="active"
                         to={"/practicar"}
@@ -181,7 +181,7 @@ export default function SideBar() {
                           <span>Detector de señas</span>
                         </div>
                       </NavLink>
-                    </li>
+                    </li> */}
                     <li>
                       <NavLink
                         activeclassname="active"
@@ -214,7 +214,7 @@ export default function SideBar() {
                         </div>
                       </NavLink>
                     </li>
-                    <li>
+                    {/* <li>
                       <NavLink
                         activeclassname="active"
                         to={"/cursosInternacional"}
@@ -229,7 +229,7 @@ export default function SideBar() {
                           <span>Cursos Especiales</span>
                         </div>
                       </NavLink>
-                    </li>
+                    </li> */}
 
 
                     <li>
