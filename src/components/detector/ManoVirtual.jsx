@@ -13,12 +13,8 @@ const QUARTER2 = Math.PI / 5;
 const VIEW_FRONT = { x: -Math.PI / 2, y: 0, z: 0 };
 const VIEW_SIDE = { x: -Math.PI / 2, y: 0, z: -Math.PI / 3 };
 const VIEW_QUARTER = { x: Math.PI / 2, y: 0, z: -Math.PI / 6 };
-const VIEW_QUARTER2 = {
-  x: -Math.PI / 1.9,
-  y: -Math.PI / 1.5,
-  z: -Math.PI * 0.4,
-};
-
+const VIEW_QUARTER2 = { x: -Math.PI / 1.9,y: -Math.PI / 1.5,z: -Math.PI * 0.4,};
+const VIEW_QUARTER4 = { x: Math.PI / 1.9,y: -Math.PI / 1,z: -Math.PI * 0.8,};
 const VIEW_QUARTER3 = {
   x: -Math.PI / 1.5,
   y: -1.5,
@@ -67,6 +63,14 @@ const PATH_UNION = [
     v(2.5, 1.5, 8)     
 ];
 
+const PATH_IUNION = [
+    v(-2.5, -1.5, 8),   
+    v(-2, -1, 8),      
+    v(0, 2.5, 8),     
+    v(2, -1, 8),      
+    v(2.5, -1.5, 8)     
+];
+
 const PATH_INTERSECTION = [
     v(-2.5, -1.5, 8), 
     v(-2, 1, 8),      
@@ -75,7 +79,28 @@ const PATH_INTERSECTION = [
     v(2.5, -1.5, 8)    
 ];
 
-const SIGNS = {
+export const SIGNS = {
+REPOSO: {
+    fingers: {
+      thumb: THUMB_DEFAULT,
+      index: STRETCHED,
+      middle: STRETCHED,
+      ring: STRETCHED,
+      pinky: STRETCHED,
+    },
+    rotation: VIEW_FRONT,
+    },
+  HOLA :{
+    fingers: {
+      thumb: THUMB_DEFAULT,
+      index: STRETCHED,
+      middle: STRETCHED,
+      ring: CURLED,
+      pinky: CURLED,
+    },
+    rotation: VIEW_QUARTER4,
+    path: PATH_STRAIGHT_H
+  },
   A: {
     fingers: {
       thumb: THUMB_TUCKED,

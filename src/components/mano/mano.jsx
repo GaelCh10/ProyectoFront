@@ -1,14 +1,16 @@
 import { useState, useEffect, useRef } from "react";
-import HandModel from "../detector/ManoVirtual";
+// Importamos SIGNS para poder verificar si la palabra completa es una seña
+import HandModel, { SIGNS } from "../detector/ManoVirtual";
 
 export default function PanelDePruebas() {
-  const [currentSign, setCurrentSign] = useState("A");
+  const [currentSign, setCurrentSign] = useState("REPOSO"); // Inicia en reposo
   const [autoPlay, setAutoPlay] = useState(false);
   const [inputText, setInputText] = useState("");
   const [isPlayingWord, setIsPlayingWord] = useState(false);
-  const wordIndexRef = useRef(0); 
+  const wordIndexRef = useRef(0);
 
   const alphabet = [
+    // Eliminamos "HOLA" de este arreglo visual, solo quedan letras puras
     "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", 
     "L", "M", "N", "Ñ", "O", "P", "Q", "R", "S", "T", "U", 
     "V", "W", "X", "Y", "Z"
@@ -34,14 +36,35 @@ export default function PanelDePruebas() {
 
       if (cleanWord.length === 0) {
         setIsPlayingWord(false);
+        setCurrentSign("REPOSO"); // Vuelve a reposo
         return;
       }
+
       const playNextLetter = () => {
+        // ¿Terminamos de deletrear?
         if (wordIndexRef.current >= cleanWord.length) {
-          setIsPlayingWord(false);
-          wordIndexRef.current = 0;
           clearInterval(wordInterval);
+          
+          // Lógica Final: ¿La palabra completa es una seña válida (ej: "HOLA")?
+          if (SIGNS[cleanWord]) {
+            setCurrentSign(cleanWord); // Reproduce la seña de la palabra
+            
+            // Le damos tiempo para que muestre la seña completa y luego vuelve a reposo
+            setTimeout(() => {
+                setIsPlayingWord(false);
+                wordIndexRef.current = 0;
+                setCurrentSign("REPOSO");
+            }, 2500); 
+
+          } else {
+            // No es una palabra en el diccionario, terminar y volver a reposo
+            setIsPlayingWord(false);
+            wordIndexRef.current = 0;
+            setCurrentSign("REPOSO");
+          }
+
         } else {
+          // Deletreando letra por letra
           const letter = cleanWord[wordIndexRef.current];
           if (alphabet.includes(letter)) {
              setCurrentSign(letter);
@@ -49,20 +72,29 @@ export default function PanelDePruebas() {
           wordIndexRef.current++;
         }
       };
+
       if (wordIndexRef.current === 0) {
         playNextLetter();
       }
       wordInterval = setInterval(playNextLetter, 1300); 
-    } else {
+
+    } else if (!isPlayingWord && !autoPlay) {
+      // Si se detiene manualmente o se vacía, volver a reposo
       wordIndexRef.current = 0;
+      // Solo vuelve a reposo si no estamos haciendo clic en botones individuales
+      if (!alphabet.includes(currentSign)) {
+        setCurrentSign("REPOSO");
+      }
     }
 
     return () => clearInterval(wordInterval);
-  }, [isPlayingWord, inputText]);
+  }, [isPlayingWord, inputText, autoPlay, currentSign]);
+
   const handlePlayWord = () => {
     if (isPlayingWord) {
       setIsPlayingWord(false);
       wordIndexRef.current = 0;
+      setCurrentSign("REPOSO");
       return;
     }
     if (autoPlay) setAutoPlay(false);
@@ -72,12 +104,12 @@ export default function PanelDePruebas() {
 
   return (
     <div className="flex flex-col lg:flex-row h-full w-full bg-gray-100 overflow-hidden relative">
-      <div className="w-full lg:w-1/3 bg-white p-6 shadow-xl  flex flex-col h-[40vh] lg:h-full overflow-hidden">
+      <div className="w-full lg:w-1/3 bg-white p-6 shadow-xl  flex flex-col h-[40vh] lg:h-full overflow-hidden border-r border-gray-200">
         
         <div className="mb-4">
           <h1 className="text-3xl font-bold text-[#fa6e06] mb-1">Mano Interactiva</h1>
           <p className="text-gray-500 text-md">
-            Escribe una palabra u oracion de maximo 30 caracteres en el traductor o selecciona una seña de abajo.
+            Escribe una palabra en el traductor o selecciona una seña de abajo.
           </p>
         </div>
 
@@ -90,10 +122,12 @@ export default function PanelDePruebas() {
                     type="text"
                     value={inputText}
                     onChange={(e) => {
-                        setInputText(e.target.value);
+                        const rawValue = e.target.value;
+                        const cleanValue = rawValue.replace(/[^a-zA-ZñÑ]/g, "").toUpperCase();
+                        setInputText(cleanValue);
                         setIsPlayingWord(false); 
                     }}
-                    placeholder="Escribe aquí (ej: AMIGO)"
+                    placeholder="Escribe aquí (ej: HOLA)"
                     className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 uppercase font-bold text-gray-700"
                     maxLength={15}
                 />
@@ -113,14 +147,17 @@ export default function PanelDePruebas() {
             </div>
             {isPlayingWord && (
                 <p className="text-xs text-orange-600 mt-2 animate-pulse">
-                    Reproduciendo: <b>{inputText.toUpperCase()}</b>...
+                    Reproduciendo...
                 </p>
             )}
         </div>
+
         <div className="bg-gray-800 p-3 rounded-lg text-center mb-4 text-white shadow-md flex justify-between items-center px-6">
             <span className="text-gray-400 text-xs uppercase tracking-widest">Seña Actual</span>
-            <span className="text-4xl font-black text-[#fa6e06]">{currentSign}</span>
+            {/* Si es reposo, mostramos guiones para que se vea limpio */}
+            <span className="text-4xl font-black text-[#fa6e06]">{currentSign === "REPOSO" ? "--" : currentSign}</span>
         </div>
+
         <button
           onClick={() => {
               setAutoPlay(!autoPlay);
@@ -134,9 +171,11 @@ export default function PanelDePruebas() {
         >
           {autoPlay ? "⏹ Detener Demo Abecedario" : "▶ Demo Abecedario Completo"}
         </button>
+
         <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
           <h3 className="text-[10px] font-bold text-gray-400 uppercase mb-2">Abecedario</h3>
           <div className="grid grid-cols-5 gap-2 pb-4">
+            {/* Iteramos solo el abecedario limpio (sin HOLA) */}
             {alphabet.map((letter) => (
               <button
                 key={letter}
