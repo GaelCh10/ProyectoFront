@@ -174,8 +174,6 @@ export default function Traductor() {
             }}
           />
         </button>
-
-        {/* --- NUEVO TEXTO INDICADOR --- */}
         <p 
           className={`font-bold text-lg ${listening ? "text-red-500" : "text-blue-600"}`}
           style={{ opacity: !tipoTraductor ? 0.5 : 1 }}

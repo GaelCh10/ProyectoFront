@@ -203,14 +203,10 @@ export default function DetectorInteractivo() {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       if (detections.length > 0) {
-        // Tomamos la detección con más confianza
         const best = detections[0];
         drawBoundingBox(ctx, best.classId, best.confidence, ...best.box);
-
-        // Actualizamos la letra detectada
         setLetra(best.className);
       } else {
-        // Si no detecta nada, limpiamos el estado
         setLetra("");
       }
     } finally {
@@ -222,7 +218,6 @@ export default function DetectorInteractivo() {
 
 return (
         <div className="flex w-full items-center flex-col relative">
-           {/* Contenedor del mensaje de feedback */}
             {feedbackMessage && (
                 <div className="absolute top-0 mt-4 px-6 py-3 bg-green-500 text-white font-bold rounded-lg shadow-lg z-20 animate-bounce">
                     {feedbackMessage}
@@ -235,10 +230,7 @@ return (
 
             {loading && <p>Cargando modelo...</p>}
 
-            {/* 2. CONTENEDOR PRINCIPAL CON FLEXBOX PARA DIVIDIR LA PANTALLA */}
             <div className="flex w-full flex-col lg:flex-row items-center justify-center space-x-4 mt-4">
-                
-                {/* Panel Izquierdo: Cámara y Detección */}
                 <div className="flex flex-col items-center">
                     <div className="relative w-[320px] h-[240px] sm:w-[640px] sm:h-[480px]">
                         <Webcam
@@ -261,10 +253,7 @@ return (
                     </button>
                 </div>
 
-                {/* Panel Derecho: Mano 3D y Resultado */}
                 <div className="flex flex-col items-center w-[320px] h-[240px] sm:w-[640px] sm:h-[480px] bg-gray-800 rounded-lg">
-                    {/* 3. PASAMOS EL ESTADO 'letra' AL COMPONENTE HandModel */}
-                    {/* Si no se detecta nada, la mano se quedará en la última seña válida */}
                     <HandModel signToShow={letra || "C"} /> 
                     
                     {detectar && (

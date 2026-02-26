@@ -3,379 +3,157 @@
 import { useRef, useEffect, memo } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-
-
+//constantes de flexión para los dedos a excepción del pulgar
 const STRETCHED = 0;
 const CURLED = Math.PI / 1.7;
 const HALF = Math.PI / 2;
 const QUARTER = Math.PI / 3;
 const QUARTER2 = Math.PI / 5;
+//constantes de rotación para las vistas
 const VIEW_FRONT = { x: -Math.PI / 2, y: 0, z: 0 };
 const VIEW_SIDE = { x: -Math.PI / 2, y: 0, z: -Math.PI / 3 };
 const VIEW_QUARTER = { x: Math.PI / 2, y: 0, z: -Math.PI / 6 };
 const VIEW_QUARTER2 = { x: -Math.PI / 1.9,y: -Math.PI / 1.5,z: -Math.PI * 0.4,};
 const VIEW_QUARTER4 = { x: Math.PI / 1.9,y: -Math.PI / 1,z: -Math.PI * 0.8,};
-const VIEW_QUARTER3 = {
-  x: -Math.PI / 1.5,
-  y: -1.5,
-  z: Math.PI  / -4,
-};
+const VIEW_QUARTER3 = { x: -Math.PI / 1.5,y: -1.5,z: Math.PI  / -4,};
 const VIEW_MIDDLE = { x: -Math.PI / 2, y: -1.5, z: Math.PI * 4 };
+//constantes del pulgar
 const THUMB_DEFAULT = { x: 0, y: -Math.PI / 6, z: Math.PI / 6 };
 const THUMB_TUCKED = { x: 0.5, y: -0.5, z: 0.8 };
 const THUMB_OUT = { x: 0, y: -1.0, z: 0.2 };
 const THUMB_CLAW = { x: -2, y: 3, z: -4 };
 const THUMB_PALM = { x: 1.5, y: -0.5, z: 0.5 };
 const THUMB_PALM2 = { x: 1.5, y: -0.5, z: -0.65 };
-const TIL = Math.PI / 4.6; 
+//constantes para la flecha auxiliar (ej. x,q,z)
 const v = (x, y, z) => new THREE.Vector3(x, y, z);
-
-const PATH_ARC_J = [
-    v(1, 3, 8),  
-    v(0, -2, 8), 
-    v(-2, -1, 8) 
-];
-
-const PATH_STRAIGHT_H = [
-    v(-3, 0, 8), 
-    v(3, 0, 8)   
-];
-
-const PATH_Z = [
-    v(-2, 2, 8), 
-    v(2, 2, 8),  
-    v(-2, -2, 8),
-    v(2, -2, 8)  
-];
-
-const PATH_HOOK = [
-    v(0, -1.5, 8),
-    v(0, 1, 8),
-    v(1.5, 2, 8),
-    v(2, 1.5, 8)
-];
-
-const PATH_UNION = [
-    v(-2.5, 1.5, 8),   
-    v(-2, -1, 8),      
-    v(0, -2.5, 8),     
-    v(2, -1, 8),      
-    v(2.5, 1.5, 8)     
-];
-
-const PATH_IUNION = [
-    v(-2.5, -1.5, 8),   
-    v(-2, -1, 8),      
-    v(0, 2.5, 8),     
-    v(2, -1, 8),      
-    v(2.5, -1.5, 8)     
-];
-
-const PATH_INTERSECTION = [
-    v(-2.5, -1.5, 8), 
-    v(-2, 1, 8),      
-    v(0, 2.5, 8),     
-    v(2, 1, 8),      
-    v(2.5, -1.5, 8)    
-];
+const PATH_ARC_J = [v(1, 3, 8), v(0, -2, 8), v(-2, -1, 8)];
+const PATH_STRAIGHT_H = [ v(-3, 0, 8), v(3, 0, 8)];
+const PATH_Z = [ v(-2, 2, 8), v(2, 2, 8), v(-2, -2, 8), v(2, -2, 8)];
+const PATH_UNION = [ v(-2.5, 1.5, 8), v(-2, -1, 8), v(0, -2.5, 8), v(2, -1, 8), v(2.5, 1.5, 8)];
+const PATH_INTERSECTION = [ v(-2.5, -1.5, 8), v(-2, 1, 8), v(0, 2.5, 8), v(2, 1, 8), v(2.5, -1.5, 8)];
 
 export const SIGNS = {
-REPOSO: {
-    fingers: {
-      thumb: THUMB_DEFAULT,
-      index: STRETCHED,
-      middle: STRETCHED,
-      ring: STRETCHED,
-      pinky: STRETCHED,
-    },
-    rotation: VIEW_FRONT,
-    },
+  REPOSO: {
+    fingers: {thumb: THUMB_DEFAULT,index: STRETCHED,middle: STRETCHED,ring: STRETCHED,pinky: STRETCHED,},
+    rotation: VIEW_FRONT,},
+
   HOLA :{
-    fingers: {
-      thumb: THUMB_DEFAULT,
-      index: STRETCHED,
-      middle: STRETCHED,
-      ring: CURLED,
-      pinky: CURLED,
-    },
+    fingers: {thumb: THUMB_DEFAULT,index: STRETCHED,middle: STRETCHED,ring: CURLED,pinky: CURLED,},
     rotation: VIEW_QUARTER4,
-    path: PATH_STRAIGHT_H
-  },
+    path: PATH_STRAIGHT_H},
+
   A: {
-    fingers: {
-      thumb: THUMB_TUCKED,
-      index: CURLED,
-      middle: CURLED,
-      ring: CURLED,
-      pinky: CURLED,
-    },
-    rotation: VIEW_FRONT,
-  },
-  S: {
-    fingers: {
-      thumb: THUMB_OUT,
-      index: CURLED,
-      middle: CURLED,
-      ring: CURLED,
-      pinky: CURLED,
-    }, 
-    rotation: VIEW_FRONT,
-  },
-  M: {
-    fingers: {
-      thumb: THUMB_PALM,
-      index: STRETCHED,
-      middle: STRETCHED,
-      ring: STRETCHED,
-      pinky: CURLED,
-    }, 
-    rotation: VIEW_QUARTER,
-  },
-  N: {
-    fingers: {
-      thumb: THUMB_PALM,
-      index: STRETCHED,
-      middle: STRETCHED,
-      ring: CURLED,
-      pinky: CURLED,
-    },
-    rotation: VIEW_QUARTER,
-  },
-
-  Ñ: {
-    fingers: {
-      thumb: THUMB_PALM,
-      index: STRETCHED,
-      middle: STRETCHED,
-      ring: CURLED,
-      pinky: CURLED,
-    },
-    rotation: VIEW_QUARTER,
-    path: PATH_UNION,
-  },
-
-  T: {
-    fingers: {
-      thumb: THUMB_PALM2,
-      index: QUARTER,
-      middle: CURLED,
-      ring: CURLED,
-      pinky: CURLED,
-    },
-    rotation: VIEW_FRONT,
-  },
-
-  L: {
-    fingers: {
-      thumb: THUMB_TUCKED,
-      index: STRETCHED,
-      middle: CURLED,
-      ring: CURLED,
-      pinky: CURLED,
-    },
-    rotation: VIEW_FRONT,
-  },
-  G: {
-    fingers: {
-      thumb: THUMB_DEFAULT,
-      index: STRETCHED,
-      middle: CURLED,
-      ring: CURLED,
-      pinky: CURLED,
-    },
-    rotation: VIEW_MIDDLE,
-  },
+    fingers: {thumb: THUMB_TUCKED,index: CURLED,middle: CURLED,ring: CURLED,pinky: CURLED,},
+    rotation: VIEW_FRONT,},
 
   B: {
-    fingers: {
-      thumb: THUMB_PALM,
-      index: STRETCHED,
-      middle: STRETCHED,
-      ring: STRETCHED,
-      pinky: STRETCHED,
-    },
-    rotation: VIEW_FRONT,
-  },
-  E: {
-    fingers: {
-      thumb: THUMB_PALM,
-      index: QUARTER,
-      middle: QUARTER,
-      ring: QUARTER,
-      pinky: QUARTER,
-    },
-    rotation: VIEW_FRONT,
-  },
-  W: {
-    fingers: {
-      thumb: THUMB_PALM,
-      index: STRETCHED,
-      middle: STRETCHED,
-      ring: STRETCHED,
-      pinky: CURLED,
-    },
-    rotation: VIEW_FRONT,
-  },
+    fingers: {thumb: THUMB_PALM,index: STRETCHED,middle: STRETCHED,ring: STRETCHED,pinky: STRETCHED,},
+    rotation: VIEW_FRONT,},
 
   C: {
-    fingers: {
-      thumb: THUMB_CLAW,
-      index: QUARTER,
-      middle: QUARTER,
-      ring: QUARTER,
-      pinky: QUARTER,
-    },
-    rotation: VIEW_SIDE,
-  },
+    fingers: {thumb: THUMB_CLAW,index: QUARTER,middle: QUARTER,ring: QUARTER,pinky: QUARTER,},
+    rotation: VIEW_SIDE,},
+
   D: {
-    fingers: {
-      thumb: THUMB_PALM,
-      index: STRETCHED,
-      middle: CURLED,
-      ring: CURLED,
-      pinky: CURLED,
-    },
-    rotation: VIEW_FRONT,
-  },
+    fingers: {thumb: THUMB_PALM,index: STRETCHED,middle: CURLED,ring: CURLED,pinky: CURLED,},
+    rotation: VIEW_FRONT,},
+
+  E: {
+    fingers: {thumb: THUMB_PALM,index: QUARTER,middle: QUARTER,ring: QUARTER,pinky: QUARTER,},
+    rotation: VIEW_FRONT,},
+
   F: {
-    fingers: {
-      thumb: THUMB_PALM,
-      index: QUARTER,
-      middle: STRETCHED,
-      ring: STRETCHED,
-      pinky: STRETCHED,
-    },
-  },
+    fingers: {thumb: THUMB_PALM,index: QUARTER,middle: STRETCHED,ring: STRETCHED,pinky: STRETCHED,},
+    rotation: VIEW_FRONT,},
+
+  G: {
+    fingers: {thumb: THUMB_DEFAULT,index: STRETCHED,middle: CURLED,ring: CURLED,pinky: CURLED,},
+    rotation: VIEW_MIDDLE,},
+
   H: {
-    fingers: {
-      thumb: THUMB_DEFAULT,
-      index: STRETCHED,
-      middle: STRETCHED,
-      ring: CURLED,
-      pinky: CURLED,
-    },
-    rotation: VIEW_MIDDLE,
-  },
+    fingers: {thumb: THUMB_DEFAULT,index: STRETCHED,middle: STRETCHED,ring: CURLED,pinky: CURLED,},
+    rotation: VIEW_MIDDLE,},
+    
   I: {
-    fingers: {
-      thumb: THUMB_PALM,
-      index: CURLED,
-      middle: CURLED,
-      ring: CURLED,
-      pinky: STRETCHED,
-    },
-    rotation: VIEW_SIDE,
-  },
+    fingers: {thumb: THUMB_PALM,index: CURLED,middle: CURLED,ring: CURLED,pinky: STRETCHED,},
+    rotation: VIEW_SIDE,},
+
   J: {
-    fingers: {
-      thumb: THUMB_PALM,
-      index: CURLED,
-      middle: CURLED,
-      ring: CURLED,
-      pinky: STRETCHED,
-    },
+    fingers: {thumb: THUMB_PALM,index: CURLED,middle: CURLED,ring: CURLED,pinky: STRETCHED,},
     rotation: VIEW_SIDE,
-    path: PATH_ARC_J
-  },
+    path: PATH_ARC_J},
+
   K: {
-    fingers: {
-      thumb: THUMB_PALM,
-      index: STRETCHED,
-      middle: QUARTER2,
-      ring: CURLED,
-      pinky: CURLED,
-    },
+    fingers: {thumb: THUMB_PALM,index: STRETCHED,middle: QUARTER2,ring: CURLED,pinky: CURLED,},
     rotation: VIEW_SIDE,
-    path: PATH_INTERSECTION
-  }, 
+    path: PATH_INTERSECTION}, 
+
+  L: {
+    fingers: {thumb: THUMB_TUCKED,index: STRETCHED,middle: CURLED,ring: CURLED,pinky: CURLED,},
+    rotation: VIEW_FRONT,},
+
+  M: {
+    fingers: {thumb: THUMB_PALM,index: STRETCHED,middle: STRETCHED,ring: STRETCHED,pinky: CURLED,}, 
+    rotation: VIEW_QUARTER,},
+
+  N: {
+    fingers: {thumb: THUMB_PALM,index: STRETCHED,middle: STRETCHED,ring: CURLED,pinky: CURLED,},
+    rotation: VIEW_QUARTER,},
+    
+  Ñ: {
+    fingers: {thumb: THUMB_PALM,index: STRETCHED,middle: STRETCHED,ring: CURLED,pinky: CURLED,},
+    rotation: VIEW_QUARTER,
+    path: PATH_UNION,},
+
   O: {
-    fingers: {
-      thumb: THUMB_CLAW,
-      index: HALF,
-      middle: HALF,
-      ring: HALF,
-      pinky: HALF,
-    },
-    rotation: VIEW_SIDE,
-  },
+    fingers: {thumb: THUMB_CLAW,index: HALF,middle: HALF,ring: HALF,pinky: HALF,},
+    rotation: VIEW_SIDE,},
+
   P: {
-    fingers: {
-      thumb: THUMB_OUT,
-      index: STRETCHED,
-      middle: QUARTER2,
-      ring: CURLED,
-      pinky: CURLED,
-    },
-    rotation: VIEW_SIDE,
-  },
+    fingers: {thumb: THUMB_OUT,index: STRETCHED,middle: QUARTER2,ring: CURLED,pinky: CURLED,},
+    rotation: VIEW_SIDE,},
+
   Q: {
-    fingers: {
-      thumb: THUMB_CLAW,
-      index: QUARTER,
-      middle: CURLED,
-      ring: CURLED,
-      pinky: CURLED,
-    },
+    fingers: {thumb: THUMB_CLAW,index: QUARTER,middle: CURLED,ring: CURLED,pinky: CURLED,},
     rotation: VIEW_QUARTER2,
-    path: PATH_UNION
-  }, 
+    path: PATH_UNION}, 
+// no es necesario instanciar la vista de frente por que es la default, pero se puede hacer si lo necesitan
   R: {
-    fingers: {
-      thumb: THUMB_PALM,
-      index: STRETCHED,
-      middle: { bend: TIL, side: -5 },
-      ring: CURLED,
-      pinky: CURLED,
-    },
+    fingers: {thumb: THUMB_PALM,index: STRETCHED,middle: QUARTER,ring: CURLED,pinky: CURLED,},
   },
+
+  S: {
+    fingers: {thumb: THUMB_OUT,index: CURLED,middle: CURLED,ring: CURLED,pinky: CURLED,}, 
+    rotation: VIEW_FRONT,},
+
+  T: {
+    fingers: {thumb: THUMB_PALM2,index: QUARTER,middle: CURLED,ring: CURLED,pinky: CURLED,},
+    rotation: VIEW_FRONT,},
+
   U: {
-    fingers: {
-      thumb: THUMB_PALM,
-      index: STRETCHED,
-      middle: STRETCHED,
-      ring: CURLED,
-      pinky: CURLED,
-    },
+    fingers: {thumb: THUMB_PALM,index: STRETCHED,middle: STRETCHED,ring: CURLED,pinky: CURLED,},
   },
+
   V: {
-    fingers: {
-      thumb: THUMB_PALM,
-      index: STRETCHED,
-      middle: STRETCHED,
-      ring: CURLED,
-      pinky: CURLED,
-    },
+    fingers: {thumb: THUMB_PALM,index: STRETCHED,middle: STRETCHED,ring: CURLED,pinky: CURLED,},
   },
+
+  W: {
+    fingers: {thumb: THUMB_PALM,index: STRETCHED,middle: STRETCHED,ring: STRETCHED,pinky: CURLED,},
+    rotation: VIEW_FRONT,},
+
   X: {
-    fingers: {
-      thumb: THUMB_CLAW,
-      index: QUARTER,
-      middle: CURLED,
-      ring: CURLED,
-      pinky: CURLED,
-    },
+    fingers: {thumb: THUMB_CLAW,index: QUARTER,middle: CURLED,ring: CURLED,pinky: CURLED,},
     rotation: VIEW_QUARTER3,
-    path:PATH_STRAIGHT_H
-  },
+    path:PATH_STRAIGHT_H},
+
   Y: {
-    fingers: {
-      thumb: THUMB_DEFAULT,
-      index: CURLED,
-      middle: CURLED,
-      ring: CURLED,
-      pinky: STRETCHED,
-    },
+    fingers: {thumb: THUMB_DEFAULT,index: CURLED,middle: CURLED,ring: CURLED,pinky: STRETCHED,},
   },
+
   Z: {
-    fingers: {
-      thumb: THUMB_PALM2,
-      index: STRETCHED,
-      middle: CURLED,
-      ring: CURLED,
-      pinky: CURLED,
-    },
-    path: PATH_Z,
-  },
+    fingers: {thumb: THUMB_PALM2,index: STRETCHED,middle: CURLED,ring: CURLED,pinky: CURLED,},
+    path: PATH_Z,},
 };
 
 const HandModel = memo(({ signToShow }) => {

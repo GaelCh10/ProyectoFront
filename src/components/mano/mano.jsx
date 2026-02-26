@@ -10,7 +10,6 @@ export default function PanelDePruebas() {
   const wordIndexRef = useRef(0);
 
   const alphabet = [
-    // Eliminamos "HOLA" de este arreglo visual, solo quedan letras puras
     "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", 
     "L", "M", "N", "Ñ", "O", "P", "Q", "R", "S", "T", "U", 
     "V", "W", "X", "Y", "Z"
@@ -41,15 +40,10 @@ export default function PanelDePruebas() {
       }
 
       const playNextLetter = () => {
-        // ¿Terminamos de deletrear?
         if (wordIndexRef.current >= cleanWord.length) {
           clearInterval(wordInterval);
-          
-          // Lógica Final: ¿La palabra completa es una seña válida (ej: "HOLA")?
           if (SIGNS[cleanWord]) {
-            setCurrentSign(cleanWord); // Reproduce la seña de la palabra
-            
-            // Le damos tiempo para que muestre la seña completa y luego vuelve a reposo
+            setCurrentSign(cleanWord);
             setTimeout(() => {
                 setIsPlayingWord(false);
                 wordIndexRef.current = 0;
@@ -57,14 +51,12 @@ export default function PanelDePruebas() {
             }, 2500); 
 
           } else {
-            // No es una palabra en el diccionario, terminar y volver a reposo
             setIsPlayingWord(false);
             wordIndexRef.current = 0;
             setCurrentSign("REPOSO");
           }
 
         } else {
-          // Deletreando letra por letra
           const letter = cleanWord[wordIndexRef.current];
           if (alphabet.includes(letter)) {
              setCurrentSign(letter);
@@ -79,9 +71,7 @@ export default function PanelDePruebas() {
       wordInterval = setInterval(playNextLetter, 1300); 
 
     } else if (!isPlayingWord && !autoPlay) {
-      // Si se detiene manualmente o se vacía, volver a reposo
       wordIndexRef.current = 0;
-      // Solo vuelve a reposo si no estamos haciendo clic en botones individuales
       if (!alphabet.includes(currentSign)) {
         setCurrentSign("REPOSO");
       }
@@ -154,7 +144,6 @@ export default function PanelDePruebas() {
 
         <div className="bg-gray-800 p-3 rounded-lg text-center mb-4 text-white shadow-md flex justify-between items-center px-6">
             <span className="text-gray-400 text-xs uppercase tracking-widest">Seña Actual</span>
-            {/* Si es reposo, mostramos guiones para que se vea limpio */}
             <span className="text-4xl font-black text-[#fa6e06]">{currentSign === "REPOSO" ? "--" : currentSign}</span>
         </div>
 
@@ -175,7 +164,6 @@ export default function PanelDePruebas() {
         <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
           <h3 className="text-[10px] font-bold text-gray-400 uppercase mb-2">Abecedario</h3>
           <div className="grid grid-cols-5 gap-2 pb-4">
-            {/* Iteramos solo el abecedario limpio (sin HOLA) */}
             {alphabet.map((letter) => (
               <button
                 key={letter}
